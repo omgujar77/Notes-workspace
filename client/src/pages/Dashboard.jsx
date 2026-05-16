@@ -1,13 +1,8 @@
 import { useEffect, useState } from "react";
-
 import { useAuth } from "../context/AuthContext";
-
 import { Link } from "react-router-dom";
-
 import AnalyticsCard from "../components/AnalyticsCard";
-
 import { getDashboardStats } from "../services/dashboardService";
-
 import toast from "react-hot-toast";
 
 import {
@@ -19,6 +14,10 @@ import {
   Archive,
   Sparkles,
   ArrowRight,
+  TrendingUp,
+  Loader2,
+  Plus,
+  Activity,
 } from "lucide-react";
 
 import {
@@ -28,512 +27,518 @@ import {
   YAxis,
   Tooltip,
   ResponsiveContainer,
+  Cell,
 } from "recharts";
 
 const Dashboard = () => {
+  const { user, logout } = useAuth();
 
-  const { user, logout } =
-    useAuth();
+  const [stats, setStats] = useState({
+    totalNotes: 0,
+    recentEditedCount: 0,
+    aiUsageCount: 0,
+    topTags: [],
+    recentNotes: [],
+    weeklyActivity: [],
+    publicNotes: 0,
+    archivedNotes: 0,
+    remainingCredits: 0,
+  });
 
-  const [stats, setStats] =
-    useState({
-      totalNotes: 0,
-      recentEditedCount: 0,
-      aiUsageCount: 0,
-      topTags: [],
-      recentNotes: [],
-      weeklyActivity: [],
-      publicNotes: 0,
-      archivedNotes: 0,
-      remainingCredits: 0,
-    });
+  const [loading, setLoading] = useState(true);
 
-  const [loading, setLoading] =
-    useState(true);
-
-  const [error, setError] =
-    useState("");
+  const [error, setError] = useState("");
 
   useEffect(() => {
-
     fetchDashboardStats();
-
   }, []);
 
-  const fetchDashboardStats =
-    async () => {
+  const fetchDashboardStats = async () => {
+    try {
+      setLoading(true);
 
-      try {
+      const data = await getDashboardStats();
 
-        setLoading(true);
+      setStats({
+        totalNotes: data.totalNotes || 0,
+        recentEditedCount: data.recentEditedCount || 0,
+        aiUsageCount: data.aiUsageCount || 0,
+        topTags: data.topTags || [],
+        recentNotes: data.recentNotes || [],
+        weeklyActivity: data.weeklyActivity || [],
+        publicNotes: data.publicNotes || 0,
+        archivedNotes: data.archivedNotes || 0,
+        remainingCredits: data.remainingCredits || 0,
+      });
+    } catch (err) {
+      console.error(err);
 
-        const data =
-          await getDashboardStats();
+      setError("Failed to load dashboard");
 
-        setStats({
-          totalNotes:
-            data.totalNotes || 0,
+      toast.error("Dashboard failed to load");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-          recentEditedCount:
-            data.recentEditedCount || 0,
-
-          aiUsageCount:
-            data.aiUsageCount || 0,
-
-          topTags:
-            data.topTags || [],
-
-          recentNotes:
-            data.recentNotes || [],
-
-          weeklyActivity:
-            data.weeklyActivity || [],
-
-          publicNotes:
-            data.publicNotes || 0,
-
-          archivedNotes:
-            data.archivedNotes || 0,
-
-          remainingCredits:
-            data.remainingCredits || 0,
-        });
-
-      } catch (err) {
-
-        console.error(err);
-
-        setError(
-          "Failed to load dashboard"
-        );
-
-        toast.error(
-          "Dashboard failed to load"
-        );
-
-      } finally {
-
-        setLoading(false);
-      }
-    };
+  const barColors = [
+    "#8b5cf6",
+    "#7c3aed",
+    "#6366f1",
+    "#3b82f6",
+    "#06b6d4",
+    "#10b981",
+    "#f59e0b",
+  ];
 
   if (loading) {
-
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+      <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center px-6">
+        
+        <div className="bg-white border border-gray-200 rounded-3xl px-8 py-7 shadow-[0_10px_40px_rgba(15,23,42,0.06)]">
+          
+          <div className="flex items-center gap-4">
+            
+            <div className="w-11 h-11 rounded-2xl bg-violet-100 flex items-center justify-center">
+              <Loader2 className="w-5 h-5 text-violet-600 animate-spin" />
+            </div>
 
-        <div className="bg-white px-8 py-6 rounded-2xl shadow-md">
+            <div>
+              <h3 className="font-semibold text-gray-900">
+                Loading dashboard
+              </h3>
 
-          <p className="text-lg font-semibold text-gray-700">
-            Loading dashboard...
-          </p>
-
+              <p className="text-sm text-gray-500 mt-1">
+                Preparing your workspace...
+              </p>
+            </div>
+          </div>
         </div>
-
       </div>
     );
   }
 
   if (error) {
-
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+      <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center px-6">
+        
+        <div className="bg-white border border-gray-200 rounded-3xl px-8 py-8 shadow-[0_10px_40px_rgba(15,23,42,0.06)] max-w-md w-full text-center">
+          
+          <div className="w-16 h-16 rounded-2xl bg-red-50 flex items-center justify-center mx-auto mb-5">
+            <Activity className="text-red-500" size={28} />
+          </div>
 
-        <div className="bg-white px-8 py-6 rounded-2xl shadow-md">
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">
+            Unable to load dashboard
+          </h2>
 
-          <p className="text-red-500 font-semibold">
-            {error}
+          <p className="text-gray-500 text-sm leading-relaxed">
+            Something went wrong while fetching your workspace data.
           </p>
 
+          <button
+            onClick={fetchDashboardStats}
+            className="mt-6 bg-violet-600 hover:bg-violet-700 text-white px-5 py-3 rounded-xl font-medium transition"
+          >
+            Try Again
+          </button>
         </div>
-
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4 md:p-8">
-
+    <div className="min-h-screen bg-[#F8FAFC] px-4 md:px-8 py-6">
+      
       <div className="max-w-7xl mx-auto">
+        
+        {/* TOP HEADER */}
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-8">
+          
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              
+              <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
 
-        {/* HERO SECTION */}
-        <div className="bg-gradient-to-r from-black to-gray-800 rounded-3xl p-6 md:p-10 text-white shadow-xl mb-8">
-
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
-
-            <div>
-
-              <p className="text-sm uppercase tracking-widest text-gray-300 mb-3">
-                AI Notes Workspace
+              <p className="text-sm font-medium text-gray-500 tracking-wide uppercase">
+                Peblo Workspace
               </p>
-
-              <h1 className="text-4xl md:text-5xl font-bold mb-3">
-                Welcome back,
-                {" "}
-                {user?.name || "User"}
-              </h1>
-
-              <p className="text-gray-300 text-lg max-w-2xl">
-                Organize your notes,
-                generate AI insights,
-                and manage your workspace
-                efficiently.
-              </p>
-
             </div>
 
-            {/* QUICK ACTIONS */}
-            <div className="flex flex-col sm:flex-row gap-4">
+            <h1 className="text-[34px] md:text-[42px] leading-tight tracking-[-0.03em] font-semibold text-gray-900">
+              Welcome back,{" "}
+              <span className="text-violet-600">
+                {user?.name?.split(" ")[0] || "User"}
+              </span>
+            </h1>
 
-              <Link to="/notes">
-
-                <button className="bg-white text-black px-6 py-4 rounded-2xl font-semibold hover:scale-[1.02] transition flex items-center gap-2 shadow-lg">
-
-                  <NotebookPen size={20} />
-
-                  Open Notes Workspace
-
-                  <ArrowRight size={18} />
-
-                </button>
-
-              </Link>
-
-              <Link to="/notes">
-
-                <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-4 rounded-2xl font-semibold transition flex items-center gap-2 shadow-lg">
-
-                  <Sparkles size={20} />
-
-                  Create New Note
-
-                </button>
-
-              </Link>
-
-            </div>
-
+            <p className="text-gray-500 mt-3 max-w-2xl leading-relaxed">
+              Continue building smarter notes, collaborating with your team,
+              and letting AI organize your workflow naturally.
+            </p>
           </div>
 
+          {/* ACTIONS */}
+          <div className="flex flex-col sm:flex-row gap-3">
+            
+            <Link to="/notes">
+              <button className="w-full sm:w-auto h-12 px-5 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 transition font-medium text-gray-700 flex items-center justify-center gap-2 shadow-sm">
+                <NotebookPen size={18} />
+                View Notes
+              </button>
+            </Link>
+
+            <Link to="/notes">
+              <button className="w-full sm:w-auto h-12 px-5 rounded-xl bg-violet-600 hover:bg-violet-700 transition text-white font-medium flex items-center justify-center gap-2 shadow-sm hover:-translate-y-[1px]">
+                <Plus size={18} />
+                New Note
+              </button>
+            </Link>
+          </div>
         </div>
 
-        {/* ANALYTICS */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-5 mb-8">
-
+        {/* QUICK STATS */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4 mb-8">
+          
           <AnalyticsCard
             title="Total Notes"
             value={stats.totalNotes}
-            color="bg-black"
-            icon={
-              <NotebookPen size={24} />
-            }
+            color="bg-violet-600"
+            icon={<NotebookPen size={22} />}
           />
 
           <AnalyticsCard
             title="AI Usage"
             value={stats.aiUsageCount}
-            color="bg-purple-600"
-            icon={
-              <Brain size={24} />
-            }
+            color="bg-indigo-600"
+            icon={<Brain size={22} />}
           />
 
           <AnalyticsCard
             title="Public Notes"
             value={stats.publicNotes}
             color="bg-blue-600"
-            icon={
-              <Globe size={24} />
-            }
+            icon={<Globe size={22} />}
           />
 
           <AnalyticsCard
             title="Archived"
             value={stats.archivedNotes}
             color="bg-orange-500"
-            icon={
-              <Archive size={24} />
-            }
+            icon={<Archive size={22} />}
           />
 
           <AnalyticsCard
             title="Recent Activity"
-            value={
-              stats.recentEditedCount
-            }
-            color="bg-green-600"
-            icon={
-              <Clock3 size={24} />
-            }
+            value={stats.recentEditedCount}
+            color="bg-emerald-600"
+            icon={<Clock3 size={22} />}
           />
-
         </div>
 
         {/* MAIN GRID */}
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-
-          {/* LEFT */}
+          
+          {/* LEFT SIDE */}
           <div className="xl:col-span-2 space-y-6">
-
-            {/* WEEKLY ACTIVITY */}
-            <div className="bg-white rounded-3xl shadow-sm p-6">
-
-              <div className="flex items-center justify-between mb-6">
-
+            
+            {/* ACTIVITY CHART */}
+            <div className="bg-white border border-gray-200 rounded-3xl p-6 md:p-7 shadow-sm">
+              
+              <div className="flex items-center justify-between mb-8">
+                
                 <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <TrendingUp className="text-violet-600" size={20} />
 
-                  <h2 className="text-2xl font-bold">
-                    Weekly Activity
-                  </h2>
+                    <h2 className="text-2xl font-semibold text-gray-900">
+                      Weekly Activity
+                    </h2>
+                  </div>
 
-                  <p className="text-gray-500 mt-1">
-                    Notes activity from last 7 days
+                  <p className="text-sm text-gray-500">
+                    Notes created and edited over the last 7 days
                   </p>
-
                 </div>
-
               </div>
 
               {stats.weeklyActivity.length > 0 ? (
+                <ResponsiveContainer width="100%" height={320}>
+                  <BarChart data={stats.weeklyActivity}>
+                    
+                    <XAxis
+                      dataKey="day"
+                      tick={{ fill: "#6b7280", fontSize: 12 }}
+                      axisLine={{ stroke: "#e5e7eb" }}
+                      tickLine={false}
+                    />
 
-                <ResponsiveContainer
-                  width="100%"
-                  height={280}
-                >
+                    <YAxis
+                      tick={{ fill: "#6b7280", fontSize: 12 }}
+                      axisLine={{ stroke: "#e5e7eb" }}
+                      tickLine={false}
+                    />
 
-                  <BarChart
-                    data={
-                      stats.weeklyActivity
-                    }
-                  >
-
-                    <XAxis dataKey="day" />
-
-                    <YAxis />
-
-                    <Tooltip />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: "#fff",
+                        border: "1px solid #e5e7eb",
+                        borderRadius: "16px",
+                        boxShadow:
+                          "0 10px 40px rgba(15,23,42,0.08)",
+                      }}
+                      cursor={{ fill: "#f8fafc" }}
+                    />
 
                     <Bar
                       dataKey="count"
-                      radius={[
-                        8,
-                        8,
-                        0,
-                        0,
-                      ]}
-                    />
-
+                      radius={[10, 10, 0, 0]}
+                    >
+                      {stats.weeklyActivity.map((entry, index) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={barColors[index % barColors.length]}
+                        />
+                      ))}
+                    </Bar>
                   </BarChart>
-
                 </ResponsiveContainer>
-
               ) : (
+                <div className="flex flex-col items-center justify-center py-20 text-center">
+                  
+                  <div className="w-16 h-16 rounded-2xl bg-violet-50 flex items-center justify-center mb-5">
+                    <TrendingUp
+                      size={30}
+                      className="text-violet-400"
+                    />
+                  </div>
 
-                <p className="text-gray-500">
-                  No activity available
-                </p>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    No activity yet
+                  </h3>
 
+                  <p className="text-sm text-gray-500 max-w-sm">
+                    Start creating notes and your workspace activity will
+                    appear here.
+                  </p>
+                </div>
               )}
-
             </div>
 
             {/* RECENT NOTES */}
-            <div className="bg-white rounded-3xl shadow-sm p-6">
-
-              <div className="flex items-center justify-between mb-6">
-
+            <div className="bg-white border border-gray-200 rounded-3xl p-6 md:p-7 shadow-sm">
+              
+              <div className="flex items-center justify-between mb-7">
+                
                 <div>
-
-                  <h2 className="text-2xl font-bold">
+                  <h2 className="text-2xl font-semibold text-gray-900">
                     Recent Notes
                   </h2>
 
-                  <p className="text-gray-500 mt-1">
-                    Recently updated notes
+                  <p className="text-sm text-gray-500 mt-1">
+                    Your latest workspace updates
                   </p>
-
                 </div>
 
                 <Link
                   to="/notes"
-                  className="text-blue-600 font-medium hover:underline"
+                  className="text-violet-600 hover:text-violet-700 font-medium transition flex items-center gap-1 text-sm"
                 >
-                  View All
+                  View all
+                  <ArrowRight size={15} />
                 </Link>
-
               </div>
 
               {stats.recentNotes.length > 0 ? (
-
                 <div className="space-y-4">
+                  
+                  {stats.recentNotes.map((note) => (
+                    <div
+                      key={note._id}
+                      className="group border border-gray-200 hover:border-violet-200 rounded-2xl p-5 transition-all hover:shadow-md bg-white"
+                    >
+                      
+                      <div className="flex items-start justify-between gap-4">
+                        
+                        <div className="flex-1 min-w-0">
+                          
+                          <h3 className="font-semibold text-gray-900 group-hover:text-violet-600 transition truncate">
+                            {note.title || "Untitled Note"}
+                          </h3>
 
-                  {stats.recentNotes.map(
-                    (note) => (
+                          <p className="text-xs text-gray-500 mt-2">
+                            Updated{" "}
+                            {new Date(note.updatedAt).toLocaleDateString(
+                              "en-US",
+                              {
+                                month: "short",
+                                day: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              }
+                            )}
+                          </p>
 
-                      <div
-                        key={note._id}
-                        className="border border-gray-200 rounded-2xl p-4 hover:shadow-md transition"
-                      >
-
-                        <h3 className="font-semibold text-lg mb-2">
-                          {note.title ||
-                            "Untitled Note"}
-                        </h3>
-
-                        <p className="text-sm text-gray-500 mb-3">
-                          Updated{" "}
-                          {new Date(
-                            note.updatedAt
-                          ).toLocaleString()}
-                        </p>
-
-                        <div className="flex flex-wrap gap-2">
-
-                          {note.tags?.map(
-                            (
-                              tag,
-                              index
-                            ) => (
-                              <span
-                                key={index}
-                                className="bg-gray-100 px-3 py-1 rounded-full text-sm"
-                              >
-                                #{tag}
-                              </span>
-                            )
+                          {note.tags && note.tags.length > 0 && (
+                            <div className="flex flex-wrap gap-2 mt-4">
+                              
+                              {note.tags.map((tag, index) => (
+                                <span
+                                  key={index}
+                                  className="bg-violet-50 text-violet-700 px-3 py-1 rounded-full text-xs font-medium"
+                                >
+                                  #{tag}
+                                </span>
+                              ))}
+                            </div>
                           )}
-
                         </div>
 
+                        <div className="w-11 h-11 rounded-xl bg-violet-50 flex items-center justify-center shrink-0">
+                          <NotebookPen
+                            size={18}
+                            className="text-violet-600"
+                          />
+                        </div>
                       </div>
-                    )
-                  )}
-
+                    </div>
+                  ))}
                 </div>
-
               ) : (
+                <div className="flex flex-col items-center justify-center py-20 text-center">
+                  
+                  <div className="w-16 h-16 rounded-2xl bg-violet-50 flex items-center justify-center mb-5">
+                    <NotebookPen
+                      size={30}
+                      className="text-violet-400"
+                    />
+                  </div>
 
-                <p className="text-gray-500">
-                  No recent notes found
-                </p>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    No notes yet
+                  </h3>
 
+                  <p className="text-sm text-gray-500 max-w-sm">
+                    Start capturing ideas and let AI organize the rest.
+                  </p>
+
+                  <Link to="/notes">
+                    <button className="mt-6 h-11 px-5 rounded-xl bg-violet-600 hover:bg-violet-700 text-white font-medium transition">
+                      Create first note
+                    </button>
+                  </Link>
+                </div>
               )}
-
             </div>
-
           </div>
 
-          {/* RIGHT */}
+          {/* RIGHT SIDE */}
           <div className="space-y-6">
+            
+            {/* AI STATS */}
+            <div className="bg-white border border-gray-200 rounded-3xl p-6 shadow-sm">
+              
+              <div className="flex items-center gap-2 mb-6">
+                <Sparkles className="text-violet-600" size={20} />
 
-            {/* AI CREDITS */}
-            <div className="bg-white rounded-3xl shadow-sm p-6">
-
-              <h2 className="text-2xl font-bold mb-4">
-                AI Usage Statistics
-              </h2>
-
-              <div className="space-y-4">
-
-                <div className="bg-purple-50 rounded-2xl p-4">
-
-                  <p className="text-gray-500 text-sm">
-                    AI Requests Used
-                  </p>
-
-                  <h3 className="text-3xl font-bold text-purple-700">
-                    {stats.aiUsageCount}
-                  </h3>
-
-                </div>
-
-                <div className="bg-green-50 rounded-2xl p-4">
-
-                  <p className="text-gray-500 text-sm">
-                    Remaining Credits
-                  </p>
-
-                  <h3 className="text-3xl font-bold text-green-700">
-                    {stats.remainingCredits}
-                  </h3>
-
-                </div>
-
+                <h2 className="text-xl font-semibold text-gray-900">
+                  AI Assistant
+                </h2>
               </div>
 
+              <div className="space-y-4">
+                
+                <div className="rounded-2xl border border-violet-100 bg-violet-50 p-5">
+                  
+                  <div className="flex items-center justify-between mb-3">
+                    
+                    <p className="text-sm font-medium text-violet-700">
+                      AI Requests Used
+                    </p>
+
+                    <Brain
+                      className="text-violet-600"
+                      size={18}
+                    />
+                  </div>
+
+                  <h3 className="text-3xl font-semibold text-violet-700">
+                    {stats.aiUsageCount}
+                  </h3>
+                </div>
+
+                <div className="rounded-2xl border border-emerald-100 bg-emerald-50 p-5">
+                  
+                  <div className="flex items-center justify-between mb-3">
+                    
+                    <p className="text-sm font-medium text-emerald-700">
+                      Remaining Credits
+                    </p>
+
+                    <Sparkles
+                      className="text-emerald-600"
+                      size={18}
+                    />
+                  </div>
+
+                  <h3 className="text-3xl font-semibold text-emerald-700">
+                    {stats.remainingCredits}
+                  </h3>
+                </div>
+              </div>
             </div>
 
-            {/* TOP TAGS */}
-            <div className="bg-white rounded-3xl shadow-sm p-6">
-
-              <h2 className="text-2xl font-bold mb-6">
-                Most Used Tags
+            {/* TAGS */}
+            <div className="bg-white border border-gray-200 rounded-3xl p-6 shadow-sm">
+              
+              <h2 className="text-xl font-semibold text-gray-900 mb-6">
+                Popular Tags
               </h2>
 
               {stats.topTags.length > 0 ? (
+                <div className="space-y-3">
+                  
+                  {stats.topTags.map((tagItem, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center justify-between rounded-xl border border-gray-100 hover:border-violet-200 bg-gray-50 hover:bg-violet-50 px-4 py-3 transition"
+                    >
+                      
+                      <span className="font-medium text-gray-700">
+                        #{tagItem.tag}
+                      </span>
 
-                <div className="space-y-4">
-
-                  {stats.topTags.map(
-                    (
-                      tagItem,
-                      index
-                    ) => (
-
-                      <div
-                        key={index}
-                        className="flex items-center justify-between bg-gray-50 rounded-xl px-4 py-3"
-                      >
-
-                        <span className="font-medium">
-                          #{tagItem.tag}
-                        </span>
-
-                        <span className="bg-black text-white px-3 py-1 rounded-full text-sm">
-                          {tagItem.count}
-                        </span>
-
-                      </div>
-                    )
-                  )}
-
+                      <span className="bg-violet-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                        {tagItem.count}
+                      </span>
+                    </div>
+                  ))}
                 </div>
-
               ) : (
-
-                <p className="text-gray-500">
-                  No tags available
-                </p>
-
+                <div className="py-10 text-center">
+                  <p className="text-sm text-gray-500">
+                    No tags available yet
+                  </p>
+                </div>
               )}
-
             </div>
 
             {/* LOGOUT */}
             <button
               onClick={() => {
-
                 logout();
 
-                toast.success(
-                  "Logged out successfully"
-                );
+                toast.success("Logged out successfully");
               }}
-              className="w-full bg-red-500 hover:bg-red-600 text-white py-3 rounded-2xl transition font-semibold flex items-center justify-center gap-2"
+              className="w-full h-12 rounded-2xl bg-white border border-red-200 hover:bg-red-50 text-red-600 font-medium transition flex items-center justify-center gap-2 shadow-sm"
             >
-
               <LogOut size={18} />
 
               Logout
-
             </button>
-
           </div>
-
         </div>
-
       </div>
-
     </div>
   );
 };
