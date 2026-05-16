@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import API from "../services/noteService";
 import TagInput from "./TagInput";
-import AIResultPanel from "./AIResultPanel";
+// import AIResultPanel from "./AIResultPanel";
 import { generateAISummary } from "../api/ai";
-import { Save, Trash2, Brain, Search } from "lucide-react";
+import { Save, Trash2, Brain, Globe,Copy, Search } from "lucide-react";
+import { togglePublic } from "../services/shareService";
+import toast from "react-hot-toast";
 
 const NoteEditor = ({ selectedNote, setSelectedNote, notes, setNotes }) => {
   const [title, setTitle] = useState("");
@@ -13,18 +15,33 @@ const NoteEditor = ({ selectedNote, setSelectedNote, notes, setNotes }) => {
   const [aiResult, setAiResult] = useState(null);
   const [loadingAI, setLoadingAI] = useState(false);
   const [aiError, setAiError] = useState("");
+  const [isPublic, setIsPublic] = useState(false);
+const [shareId, setShareId] = useState("");
 
   // LOAD SELECTED NOTE
   useEffect(() => {
-    if (selectedNote) {
-      setTitle(selectedNote.title || "");
+  if (selectedNote) {
 
-      setContent(selectedNote.content || "");
+    setTitle(selectedNote.title || "");
 
-      // IMPORTANT FIX
-      setTags(selectedNote.tags ? [...selectedNote.tags] : []);
-    }
-  }, [selectedNote?._id]);
+    setContent(selectedNote.content || "");
+
+    setTags(
+      selectedNote.tags
+        ? [...selectedNote.tags]
+        : []
+    );
+
+    // SHARE DATA
+    setIsPublic(
+      selectedNote.isPublic || false
+    );
+
+    setShareId(
+      selectedNote.shareId || ""
+    );
+  }
+}, [selectedNote]);
 
   // SAVE NOTE
   const saveNote = async () => {
@@ -81,6 +98,69 @@ const NoteEditor = ({ selectedNote, setSelectedNote, notes, setNotes }) => {
   }
 };
 
+const handleTogglePublic = async () => {
+  try {
+
+    const data = await togglePublic(
+      selectedNote._id
+    );
+
+    setIsPublic(data.isPublic);
+
+    setShareId(data.shareId);
+
+    // update selected note locally
+    setSelectedNote({
+      ...selectedNote,
+      isPublic: data.isPublic,
+      shareId: data.shareId,
+    });
+
+    toast.success(
+      data.isPublic
+        ? "Note is now public"
+        : "Note is now private"
+    );
+
+  } catch (error) {
+
+    console.log(error);
+
+    toast.error(
+      "Failed to update visibility"
+    );
+  }
+};
+
+const handleCopyLink = async () => {
+
+  if (!shareId) {
+    toast.error("No share link found");
+    return;
+  }
+
+  try {
+
+    const url =
+      `${window.location.origin}/shared/${shareId}`;
+
+    await navigator.clipboard.writeText(url);
+
+    toast.success(
+      "Share link copied!"
+    );
+
+  } catch (error) {
+
+    console.log(error);
+
+    toast.error(
+      "Failed to copy link"
+    );
+  }
+};
+
+
   // DELETE NOTE
   const deleteNote = async () => {
     const confirmDelete = window.confirm("Delete this note?");
@@ -134,6 +214,32 @@ const NoteEditor = ({ selectedNote, setSelectedNote, notes, setNotes }) => {
     ? "Generating..."
     : "Generate AI Summary"}
 </button>
+
+<button
+  onClick={handleTogglePublic}
+  className={`px-4 py-2 rounded flex items-center gap-2 text-white ${
+    isPublic
+      ? "bg-orange-500 hover:bg-orange-600"
+      : "bg-blue-500 hover:bg-blue-600"
+  }`}
+>
+  <Globe size={18} />
+
+  {isPublic
+    ? "Make Private"
+    : "Make Public"}
+</button>
+
+{isPublic && (
+  <button
+    onClick={handleCopyLink}
+    className="bg-gray-800 hover:bg-black text-white px-4 py-2 rounded flex items-center gap-2"
+  >
+    <Copy size={18} />
+
+    Copy Link
+  </button>
+)}
 {aiError && (
   <div className="mt-4 bg-red-50 border border-red-200 text-red-600 p-4 rounded-xl">
 
@@ -148,6 +254,8 @@ const NoteEditor = ({ selectedNote, setSelectedNote, notes, setNotes }) => {
     AI is analyzing your note...
 
   </div>
+
+  
 )}
 
           <button

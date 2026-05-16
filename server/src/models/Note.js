@@ -32,6 +32,8 @@ const noteSchema = new mongoose.Schema(
 
     shareId: {
       type: String,
+       unique: true,
+      sparse: true,
       default: "",
     },
 
