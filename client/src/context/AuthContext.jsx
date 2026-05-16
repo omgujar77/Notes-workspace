@@ -1,22 +1,34 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+
+import { useNavigate } from "react-router-dom";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
 
-  // User state
+  // NAVIGATE
+  const navigate = useNavigate();
+
+  // USER STATE
   const [user, setUser] = useState(null);
 
-  // Loading state
+  // LOADING STATE
   const [loading, setLoading] = useState(true);
 
-  // Check token on app start
+  // CHECK AUTH ON REFRESH
   useEffect(() => {
 
     const token = localStorage.getItem("token");
+
     const storedUser = localStorage.getItem("user");
 
     if (token && storedUser) {
+
       setUser(JSON.parse(storedUser));
     }
 
@@ -24,17 +36,20 @@ export const AuthProvider = ({ children }) => {
 
   }, []);
 
-  // LOGIN FUNCTION
+  // LOGIN
   const login = (userData, token) => {
 
     localStorage.setItem("token", token);
 
-    localStorage.setItem("user", JSON.stringify(userData));
+    localStorage.setItem(
+      "user",
+      JSON.stringify(userData)
+    );
 
     setUser(userData);
   };
 
-  // LOGOUT FUNCTION
+  // LOGOUT
   const logout = () => {
 
     localStorage.removeItem("token");
@@ -42,6 +57,8 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("user");
 
     setUser(null);
+
+    navigate("/login");
   };
 
   return (
@@ -58,7 +75,7 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-// Custom Hook
+// CUSTOM HOOK
 export const useAuth = () => {
   return useContext(AuthContext);
 };

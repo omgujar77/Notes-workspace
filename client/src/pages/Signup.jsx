@@ -32,7 +32,7 @@ const Signup = () => {
 
       login(res.data.user, res.data.token);
 
-      navigate("/dashboard");
+      navigate("/");
 
     } catch (error) {
 

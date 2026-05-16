@@ -1,11 +1,15 @@
-import express from "express";
 import dotenv from "dotenv";
+dotenv.config();
+
+
+import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 import authRoutes from "./routes/authRoutes.js";
+import noteRoutes from "./routes/noteRoutes.js";
+import aiRoutes from "./routes/aiRoutes.js";
 import verifyToken from "./middleware/verifyToken.js";
 
-dotenv.config();
 
 const app = express();
 
@@ -18,7 +22,8 @@ mongoose
   .catch((err) => console.log(err));
 
 app.use("/api/auth", authRoutes);
-
+app.use("/api/notes", noteRoutes);
+app.use("/api/ai", aiRoutes);
 
 app.get("/", (req, res) => {
   res.json({ message: "API Running" });
