@@ -1,7 +1,12 @@
 import { useState } from "react";
+
 import api from "../api/axios";
+
 import { useNavigate, Link } from "react-router-dom";
+
 import { useAuth } from "../context/AuthContext";
+
+import toast from "react-hot-toast";
 
 const Login = () => {
 
@@ -43,20 +48,21 @@ const Login = () => {
         res.data.token
       );
 
-      // SAVE USER IN CONTEXT
+      // SAVE USER
       login(
         res.data.user,
         res.data.token
       );
 
-      // REDIRECT
+      toast.success("Login successful");
+
       navigate("/");
 
     } catch (error) {
 
       console.log(error);
 
-      alert(
+      toast.error(
         error?.response?.data?.message ||
         "Login failed"
       );
@@ -80,13 +86,16 @@ const Login = () => {
           Login to your AI Notes Workspace
         </p>
 
-        <form onSubmit={handleSubmit}>
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-4"
+        >
 
           <input
             type="email"
             name="email"
             placeholder="Enter email"
-            className="w-full border p-3 rounded-lg mb-4 outline-none focus:ring-2 focus:ring-blue-400"
+            className="w-full border p-3 rounded-lg outline-none focus:ring-2 focus:ring-blue-400"
             value={formData.email}
             onChange={handleChange}
             required
@@ -96,7 +105,7 @@ const Login = () => {
             type="password"
             name="password"
             placeholder="Enter password"
-            className="w-full border p-3 rounded-lg mb-6 outline-none focus:ring-2 focus:ring-blue-400"
+            className="w-full border p-3 rounded-lg outline-none focus:ring-2 focus:ring-blue-400"
             value={formData.password}
             onChange={handleChange}
             required
@@ -105,7 +114,11 @@ const Login = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-black hover:bg-gray-800 text-white p-3 rounded-lg transition"
+            className={`w-full p-3 rounded-lg text-white transition ${
+              loading
+                ? "bg-gray-500 cursor-not-allowed"
+                : "bg-black hover:bg-gray-800"
+            }`}
           >
             {loading ? "Logging in..." : "Login"}
           </button>

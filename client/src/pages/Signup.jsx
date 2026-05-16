@@ -1,13 +1,23 @@
 import { useState } from "react";
+
 import api from "../api/axios";
-import { useNavigate } from "react-router-dom";
+
+import {
+  useNavigate,
+  Link,
+} from "react-router-dom";
+
 import { useAuth } from "../context/AuthContext";
+
+import toast from "react-hot-toast";
 
 const Signup = () => {
 
   const navigate = useNavigate();
 
   const { login } = useAuth();
+
+  const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -16,6 +26,7 @@ const Signup = () => {
   });
 
   const handleChange = (e) => {
+
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
@@ -26,11 +37,28 @@ const Signup = () => {
 
     e.preventDefault();
 
+    setLoading(true);
+
     try {
 
-      const res = await api.post("/auth/signup", formData);
+      const res = await api.post(
+        "/auth/signup",
+        formData
+      );
 
-      login(res.data.user, res.data.token);
+      // SAVE TOKEN
+      localStorage.setItem(
+        "token",
+        res.data.token
+      );
+
+      // SAVE USER
+      login(
+        res.data.user,
+        res.data.token
+      );
+
+      toast.success("Account created successfully");
 
       navigate("/");
 
@@ -38,53 +66,93 @@ const Signup = () => {
 
       console.log(error);
 
-      alert(error.response.data.message);
+      toast.error(
+        error?.response?.data?.message ||
+        "Signup failed"
+      );
+
+    } finally {
+
+      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
 
-      <form
-        onSubmit={handleSubmit}
-        className="w-[400px] p-6 shadow-lg rounded-lg"
-      >
+      <div className="w-full max-w-md bg-white shadow-xl rounded-2xl p-8">
 
-        <h1 className="text-3xl font-bold mb-6">
-          Signup
+        <h1 className="text-4xl font-bold text-center mb-2">
+          Create Account
         </h1>
 
-        <input
-          type="text"
-          name="name"
-          placeholder="Name"
-          className="w-full border p-3 mb-4"
-          onChange={handleChange}
-        />
+        <p className="text-center text-gray-500 mb-8">
+          Start using your AI Notes Workspace
+        </p>
 
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          className="w-full border p-3 mb-4"
-          onChange={handleChange}
-        />
-
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          className="w-full border p-3 mb-4"
-          onChange={handleChange}
-        />
-
-        <button
-          className="w-full bg-black text-white p-3 rounded"
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-4"
         >
-          Signup
-        </button>
 
-      </form>
+          <input
+            type="text"
+            name="name"
+            placeholder="Enter name"
+            className="w-full border p-3 rounded-lg outline-none focus:ring-2 focus:ring-blue-400"
+            value={formData.name}
+            onChange={handleChange}
+            required
+          />
+
+          <input
+            type="email"
+            name="email"
+            placeholder="Enter email"
+            className="w-full border p-3 rounded-lg outline-none focus:ring-2 focus:ring-blue-400"
+            value={formData.email}
+            onChange={handleChange}
+            required
+          />
+
+          <input
+            type="password"
+            name="password"
+            placeholder="Enter password"
+            className="w-full border p-3 rounded-lg outline-none focus:ring-2 focus:ring-blue-400"
+            value={formData.password}
+            onChange={handleChange}
+            required
+          />
+
+          <button
+            type="submit"
+            disabled={loading}
+            className={`w-full p-3 rounded-lg text-white transition ${
+              loading
+                ? "bg-gray-500 cursor-not-allowed"
+                : "bg-black hover:bg-gray-800"
+            }`}
+          >
+            {loading ? "Creating Account..." : "Signup"}
+          </button>
+
+        </form>
+
+        <p className="text-center text-gray-600 mt-6">
+
+          Already have an account?{" "}
+
+          <Link
+            to="/login"
+            className="text-blue-500 font-semibold"
+          >
+            Login
+          </Link>
+
+        </p>
+
+      </div>
 
     </div>
   );

@@ -32,10 +32,14 @@ const noteSchema = new mongoose.Schema(
 
     shareId: {
       type: String,
-       unique: true,
+      unique: true,
       sparse: true,
       default: "",
     },
+  aiGeneratedAt: {
+  type: Date,
+  default: null,
+},
 
     isArchived: {
       type: Boolean,
@@ -44,7 +48,7 @@ const noteSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 const Note = mongoose.model("Note", noteSchema);

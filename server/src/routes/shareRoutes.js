@@ -7,14 +7,39 @@ import {
 
 import protect from "../middleware/authMiddleware.js";
 
+import validate from "../middleware/validate.js";
+
+import {
+  toggleShareValidation,
+  publicShareValidation,
+} from "../validators/shareValidator.js";
+
 const router = express.Router();
 
 
 // PRIVATE ROUTE
-router.patch("/toggle/:id", protect, togglePublicNote);
+router.patch(
+  "/toggle/:id",
+
+  protect,
+
+  toggleShareValidation,
+
+  validate,
+
+  togglePublicNote
+);
 
 
 // PUBLIC ROUTE
-router.get("/:shareId", getPublicNote);
+router.get(
+  "/:shareId",
+
+  publicShareValidation,
+
+  validate,
+
+  getPublicNote
+);
 
 export default router;
