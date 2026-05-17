@@ -205,7 +205,7 @@ const Signup = () => {
                   </label>
 
                   <span className="text-xs text-gray-400">
-                    Minimum 6 characters
+                    Minimum 3 characters
                   </span>
                 </div>
 
@@ -217,7 +217,7 @@ const Signup = () => {
                     value={formData.password}
                     onChange={handleChange}
                     required
-                    minLength={6}
+                    minLength={3}
                     className="w-full h-11 rounded-xl border border-gray-200 bg-white px-4 pr-12 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition-all focus:border-violet-500 focus:ring-4 focus:ring-violet-100"
                   />
 
