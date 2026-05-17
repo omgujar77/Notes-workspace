@@ -140,7 +140,7 @@ const NotesSidebar = ({
     }`;
 
   return (
-    <aside className="h-full w-full flex flex-col bg-[#FAFAFC] border-r border-gray-200">
+    <aside className="transform-gpu h-full w-full flex flex-col bg-[#FAFAFC] border-r border-gray-200">
       {/* HEADER */}
       <div className="px-5 pt-5 pb-4 border-b border-gray-200 bg-white">
         {/* TITLE */}

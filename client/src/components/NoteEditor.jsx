@@ -244,7 +244,7 @@ const NoteEditor = ({ selectedNote, setSelectedNote, notes, setNotes }) => {
   // EMPTY STATE
   if (!selectedNote) {
     return (
-      <div className="h-full bg-[#F8FAFC] flex items-center justify-center px-6">
+      <div className="transform-gpu h-full bg-[#F8FAFC] flex items-center justify-center px-6">
         <div className="max-w-md text-center">
           <div className="w-20 h-20 rounded-3xl bg-violet-100 flex items-center justify-center mx-auto mb-6">
             <FileText className="w-10 h-10 text-violet-600" />
@@ -264,7 +264,7 @@ const NoteEditor = ({ selectedNote, setSelectedNote, notes, setNotes }) => {
   }
 
   return (
-    <div className="h-full bg-[#F8FAFC] overflow-hidden flex flex-col">
+    <div className="transform-gpu h-full bg-[#F8FAFC] overflow-hidden flex flex-col">
       {/* TOP HEADER */}
       <div className="border-b border-gray-200 bg-white px-4 md:px-8 py-4 sticky top-0 z-30">
         <div className="flex flex-col gap-4">
@@ -279,7 +279,7 @@ const NoteEditor = ({ selectedNote, setSelectedNote, notes, setNotes }) => {
 
               <div>
                 <h2 className="text-lg font-semibold text-gray-900">
-                  Peblo Notes Workspace
+                   Notes Workspace
                 </h2>
 
                 <p className="text-sm text-gray-500">

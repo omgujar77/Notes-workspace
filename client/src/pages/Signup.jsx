@@ -67,7 +67,7 @@ const Signup = () => {
 
               <div>
                 <h2 className="text-xl font-semibold text-gray-900">
-                  Peblo Notes
+                   Notes
                 </h2>
 
                 <p className="text-sm text-gray-500">
@@ -126,184 +126,147 @@ const Signup = () => {
             </div>
           </div>
 
-          {/* Mock Preview */}
-          <div className="mt-16">
-            <div className="bg-white border border-gray-200 rounded-3xl p-6 shadow-[0_10px_40px_rgba(15,23,42,0.06)] max-w-md">
-              <div className="flex items-start justify-between mb-5">
-                <div>
-                  <h3 className="font-semibold text-gray-900">
-                    Product Strategy Meeting
-                  </h3>
-
-                  <p className="text-sm text-gray-500 mt-1">
-                    Updated 12 min ago
-                  </p>
-                </div>
-
-                <span className="px-3 py-1 rounded-full bg-violet-100 text-violet-700 text-xs font-medium">
-                  AI Summary
-                </span>
-              </div>
-
-              <div className="space-y-3 text-sm text-gray-600">
-                <p>• Finalize dashboard collaboration workflow</p>
-
-                <p>• Improve async note synchronization</p>
-
-                <p>• Add AI-generated action items support</p>
-              </div>
-
-              <div className="flex items-center gap-2 mt-6">
-                <div className="w-8 h-8 rounded-full bg-violet-200" />
-                <div className="w-8 h-8 rounded-full bg-blue-200 -ml-3" />
-                <div className="w-8 h-8 rounded-full bg-cyan-200 -ml-3" />
-
-                <span className="text-sm text-gray-500 ml-2">
-                  3 collaborators active
-                </span>
-              </div>
-            </div>
-          </div>
+          
         </div>
       </div>
 
       {/* RIGHT SECTION */}
-      <div className="flex-1 flex items-center justify-center px-6 py-10 relative z-10">
-        <div className="w-full max-w-lg">
-          {/* Mobile Logo */}
-          <div className="lg:hidden flex items-center gap-3 mb-10 justify-center">
-            <div className="w-12 h-12 rounded-2xl bg-violet-600 flex items-center justify-center">
-              <FileText className="w-6 h-6 text-white" />
-            </div>
-
-            <div>
-              <h2 className="text-lg font-semibold text-gray-900">
-                Peblo Notes
-              </h2>
-
-              <p className="text-sm text-gray-500">Collaborative workspace</p>
-            </div>
-          </div>
-
-          {/* Card */}
-          <div className="bg-white border border-gray-200 rounded-[28px] p-8 md:p-10 shadow-[0_10px_40px_rgba(15,23,42,0.08)]">
-            {/* Header */}
-            <div className="mb-8">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-violet-200 mb-6">
-                <Sparkles className="w-7 h-7 text-white" />
-              </div>
-
-              <h1 className="text-[32px] leading-tight tracking-[-0.02em] font-semibold text-gray-900 mb-3">
-                Create your account
-              </h1>
-
-              <p className="text-gray-500 leading-relaxed">
-                Build smarter notes, collaborate in real-time, and let AI
-                simplify your workflow.
-              </p>
-            </div>
-
-            {/* FORM */}
-            <form onSubmit={handleSubmit} className="space-y-5">
-              {/* NAME */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Full name
-                </label>
-
-                <input
-                  type="text"
-                  name="name"
-                  placeholder="John Doe"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required
-                  className="w-full h-12 rounded-xl border border-gray-200 bg-white px-4 text-gray-900 placeholder:text-gray-400 outline-none transition-all focus:border-violet-500 focus:ring-4 focus:ring-violet-100"
-                />
-              </div>
-
-              {/* EMAIL */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Email address
-                </label>
-
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="you@example.com"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  className="w-full h-12 rounded-xl border border-gray-200 bg-white px-4 text-gray-900 placeholder:text-gray-400 outline-none transition-all focus:border-violet-500 focus:ring-4 focus:ring-violet-100"
-                />
-              </div>
-
-              {/* PASSWORD */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Password
-                </label>
-
-                <input
-                  type="password"
-                  name="password"
-                  placeholder="••••••••"
-                  value={formData.password}
-                  onChange={handleChange}
-                  required
-                  className="w-full h-12 rounded-xl border border-gray-200 bg-white px-4 text-gray-900 placeholder:text-gray-400 outline-none transition-all focus:border-violet-500 focus:ring-4 focus:ring-violet-100"
-                />
-              </div>
-
-              {/* BUTTON */}
-              <button
-                type="submit"
-                disabled={loading}
-                className={`w-full h-12 rounded-xl font-medium transition-all duration-200 shadow-sm mt-2 flex items-center justify-center ${
-                  loading
-                    ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                    : "bg-violet-600 text-white hover:bg-violet-700 hover:-translate-y-[1px] active:translate-y-0"
-                }`}
-              >
-                {loading ? (
-                  <span className="flex items-center gap-2">
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    Creating account...
-                  </span>
-                ) : (
-                  "Create account"
-                )}
-              </button>
-            </form>
-
-            {/* FOOTER */}
-            <div className="mt-8 text-center">
-              <p className="text-sm text-gray-600">
-                Already have an account?{" "}
-                <Link
-                  to="/login"
-                  className="text-violet-600 hover:text-violet-700 font-semibold transition"
-                >
-                  Log in
-                </Link>
-              </p>
-            </div>
-          </div>
-
-          {/* BOTTOM TEXT */}
-          <p className="text-center mt-6 text-xs text-gray-500 leading-relaxed">
-            By signing up, you agree to our{" "}
-            <a href="#" className="text-gray-700 hover:underline">
-              Terms of Service
-            </a>{" "}
-            and{" "}
-            <a href="#" className="text-gray-700 hover:underline">
-              Privacy Policy
-            </a>
-          </p>
-        </div>
+      <div className="flex-1 flex items-center justify-center px-4 py-4 relative z-10 overflow-y-auto">
+  <div className="w-full max-w-md">
+    {/* Mobile Logo */}
+    <div className="lg:hidden flex items-center gap-3 mb-6 justify-center">
+      <div className="w-10 h-10 rounded-2xl bg-violet-600 flex items-center justify-center">
+        <FileText className="w-5 h-5 text-white" />
       </div>
+
+      <div>
+        <h2 className="text-base font-semibold text-gray-900">
+           Notes
+        </h2>
+
+        <p className="text-xs text-gray-500">Collaborative workspace</p>
+      </div>
+    </div>
+
+    {/* Card */}
+    <div className="bg-white border border-gray-200 rounded-[24px] p-6 md:p-7 shadow-[0_10px_30px_rgba(15,23,42,0.06)]">
+      {/* Header */}
+      <div className="mb-6">
+        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-violet-200 mb-4">
+          <Sparkles className="w-6 h-6 text-white" />
+        </div>
+
+        <h1 className="text-2xl md:text-[28px] leading-tight tracking-[-0.02em] font-semibold text-gray-900 mb-2">
+          Create your account
+        </h1>
+
+        <p className="text-sm text-gray-500 leading-relaxed">
+          Build smarter notes, collaborate in real-time, and let AI simplify
+          your workflow.
+        </p>
+      </div>
+
+      {/* FORM */}
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {/* NAME */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1.5">
+            Full name
+          </label>
+
+          <input
+            type="text"
+            name="name"
+            placeholder="John Doe"
+            value={formData.name}
+            onChange={handleChange}
+            required
+            className="w-full h-11 rounded-xl border border-gray-200 bg-white px-4 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition-all focus:border-violet-500 focus:ring-4 focus:ring-violet-100"
+          />
+        </div>
+
+        {/* EMAIL */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1.5">
+            Email address
+          </label>
+
+          <input
+            type="email"
+            name="email"
+            placeholder="you@example.com"
+            value={formData.email}
+            onChange={handleChange}
+            required
+            className="w-full h-11 rounded-xl border border-gray-200 bg-white px-4 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition-all focus:border-violet-500 focus:ring-4 focus:ring-violet-100"
+          />
+        </div>
+
+        {/* PASSWORD */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1.5">
+            Password
+          </label>
+
+          <input
+            type="password"
+            name="password"
+            placeholder="••••••••"
+            value={formData.password}
+            onChange={handleChange}
+            required
+            className="w-full h-11 rounded-xl border border-gray-200 bg-white px-4 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition-all focus:border-violet-500 focus:ring-4 focus:ring-violet-100"
+          />
+        </div>
+
+        {/* BUTTON */}
+        <button
+          type="submit"
+          disabled={loading}
+          className={`w-full h-11 rounded-xl text-sm font-medium transition-all duration-200 shadow-sm mt-1 flex items-center justify-center ${
+            loading
+              ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+              : "bg-violet-600 text-white hover:bg-violet-700 hover:-translate-y-[1px] active:translate-y-0"
+          }`}
+        >
+          {loading ? (
+            <span className="flex items-center gap-2">
+              <Loader2 className="w-4 h-4 animate-spin" />
+              Creating account...
+            </span>
+          ) : (
+            "Create account"
+          )}
+        </button>
+      </form>
+
+      {/* FOOTER */}
+      <div className="mt-5 text-center">
+        <p className="text-sm text-gray-600">
+          Already have an account?{" "}
+          <Link
+            to="/login"
+            className="text-violet-600 hover:text-violet-700 font-semibold transition"
+          >
+            Log in
+          </Link>
+        </p>
+      </div>
+    </div>
+
+    {/* BOTTOM TEXT */}
+    <p className="text-center mt-4 text-[11px] text-gray-500 leading-relaxed px-2">
+      By signing up, you agree to our{" "}
+      <a href="#" className="text-gray-700 hover:underline">
+        Terms of Service
+      </a>{" "}
+      and{" "}
+      <a href="#" className="text-gray-700 hover:underline">
+        Privacy Policy
+      </a>
+    </p>
+  </div>
+</div>
     </div>
   );
 };

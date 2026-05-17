@@ -1,55 +1,50 @@
+import mongoose from "mongoose";
 import Note from "../models/Note.js";
 
-export const getDashboardStats = async (
-  req,
-  res
-) => {
-
+export const getDashboardStats = async (req, res) => {
   try {
 
-    const userId =
-      req.user.id;
+    const userId = req.user.id;
+
+    const userObjectId =
+      new mongoose.Types.ObjectId(userId);
 
     // TOTAL NOTES
     const totalNotes =
       await Note.countDocuments({
-        userId,
+        userId: userObjectId,
         isArchived: false,
       });
 
     // ARCHIVED NOTES
     const archivedNotes =
       await Note.countDocuments({
-        userId,
+        userId: userObjectId,
         isArchived: true,
       });
 
     // PUBLIC NOTES
     const publicNotes =
       await Note.countDocuments({
-        userId,
+        userId: userObjectId,
         isPublic: true,
       });
 
     // AI GENERATED NOTES
     const aiUsageCount =
       await Note.countDocuments({
-        userId,
+        userId: userObjectId,
         aiGenerated: true,
       });
 
     // RECENTLY EDITED
     const recentEditedCount =
       await Note.countDocuments({
-        userId,
+        userId: userObjectId,
         updatedAt: {
           $gte: new Date(
             Date.now() -
-            7 *
-              24 *
-              60 *
-              60 *
-              1000
+            7 * 24 * 60 * 60 * 1000
           ),
         },
       });
@@ -57,7 +52,7 @@ export const getDashboardStats = async (
     // RECENT NOTES
     const recentNotes =
       await Note.find({
-        userId,
+        userId: userObjectId,
         isArchived: false,
       })
         .sort({
@@ -69,12 +64,11 @@ export const getDashboardStats = async (
         );
 
     // TOP TAGS
-    const tagAggregation =
+    const topTags =
       await Note.aggregate([
         {
           $match: {
-            userId:
-              req.user.id,
+            userId: userObjectId,
             isArchived: false,
           },
         },
@@ -101,15 +95,15 @@ export const getDashboardStats = async (
         {
           $limit: 5,
         },
-      ]);
 
-    const topTags =
-      tagAggregation.map(
-        (tag) => ({
-          tag: tag._id,
-          count: tag.count,
-        })
-      );
+        {
+          $project: {
+            _id: 0,
+            tag: "$_id",
+            count: 1,
+          },
+        },
+      ]);
 
     // WEEKLY ACTIVITY
     const weeklyActivity = [];
@@ -146,7 +140,7 @@ export const getDashboardStats = async (
 
       const count =
         await Note.countDocuments({
-          userId,
+          userId: userObjectId,
           updatedAt: {
             $gte: start,
             $lte: end,
@@ -161,6 +155,7 @@ export const getDashboardStats = async (
               weekday: "short",
             }
           ),
+
         count,
       });
     }
@@ -191,6 +186,7 @@ export const getDashboardStats = async (
     res.status(500).json({
       message:
         "Dashboard stats error",
+
       error:
         error.message,
     });

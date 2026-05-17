@@ -49,7 +49,7 @@ const AIResultPanel = ({ aiResult, onUseTitle }) => {
   );
 
   return (
-    <div className="w-full bg-white border border-gray-200 rounded-3xl shadow-sm overflow-hidden">
+    <div className="transform-gpu w-full bg-white border border-gray-200 rounded-3xl shadow-sm overflow-hidden">
       {/* HEADER */}
       <div className="border-b border-gray-100 px-6 py-5">
         <div className="flex items-start justify-between gap-4">
@@ -241,7 +241,7 @@ const AIResultPanel = ({ aiResult, onUseTitle }) => {
           </div>
 
           <div className="text-xs text-gray-400">
-            Peblo AI Workspace
+            AI Workspace
           </div>
         </div>
       </div>

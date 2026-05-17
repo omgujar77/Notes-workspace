@@ -90,7 +90,7 @@ const PublicNotePage = () => {
 
             <div>
               <h2 className="text-sm font-semibold text-gray-900">
-                Peblo Notes
+                 Notes
               </h2>
 
               <p className="text-xs text-gray-500">
@@ -122,7 +122,7 @@ const PublicNotePage = () => {
                 <Sparkles size={13} className="text-[#7C3AED]" />
 
                 <span className="text-xs font-medium text-[#6D28D9]">
-                  Shared from Peblo Workspace
+                  Shared from Workspace
                 </span>
               </div>
 
@@ -181,7 +181,7 @@ const PublicNotePage = () => {
           <div className="flex items-center gap-2">
             <Sparkles size={14} className="text-[#7C3AED]" />
 
-            <span>Shared securely using Peblo AI Notes Workspace</span>
+            <span>Shared securely using AI Notes Workspace</span>
           </div>
         </div>
       </div>

@@ -148,7 +148,7 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] px-4 md:px-8 py-6">
+    <div className="transform-gpu min-h-screen bg-[#F8FAFC] px-4 md:px-8 py-6">
       <div className="max-w-7xl mx-auto">
         {/* TOP HEADER */}
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-8">
@@ -157,7 +157,7 @@ const Dashboard = () => {
               <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
 
               <p className="text-sm font-medium text-gray-500 tracking-wide uppercase">
-                Peblo Workspace
+                 Workspace
               </p>
             </div>
 

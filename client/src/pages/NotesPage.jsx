@@ -73,7 +73,7 @@ const NotesPage = () => {
   }
 
   return (
-    <div className="h-screen overflow-hidden bg-[#F8F9FC] flex">
+    <div className="transform-gpu h-screen overflow-hidden bg-[#F8F9FC] flex">
       {/* MOBILE SIDEBAR OVERLAY */}
       {mobileSidebar && (
         <div
