@@ -1,11 +1,15 @@
 import { useState } from "react";
-import api from "../api/axios";
 import { useNavigate, Link } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
+import { useAuth } from "../context/AuthContext";
 import { Loader2, Sparkles, FileText, Users } from "lucide-react";
+import useDocumentTitle from "../hooks/useDocumentTitle";
+
+import { signupUser } from "../services/authService";
 
 const Signup = () => {
+  useDocumentTitle("Signup");
+
   const navigate = useNavigate();
   const { login } = useAuth();
 
@@ -30,12 +34,9 @@ const Signup = () => {
     setLoading(true);
 
     try {
-      const res = await api.post("/auth/signup", formData);
+      const data = await signupUser(formData);
 
-      localStorage.setItem("token", res.data.token);
-
-      login(res.data.user, res.data.token);
-
+      login(data.user, data.token);
       toast.success("Account created successfully");
 
       navigate("/");
@@ -50,16 +51,13 @@ const Signup = () => {
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] flex overflow-hidden relative">
-      
       {/* Background Blur */}
       <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-violet-200/20 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-blue-200/20 rounded-full blur-3xl pointer-events-none" />
 
       {/* LEFT SECTION */}
       <div className="hidden lg:flex flex-1 relative border-r border-gray-200 bg-white px-16 py-14">
-        
         <div className="max-w-xl flex flex-col justify-between w-full">
-          
           {/* Brand */}
           <div>
             <div className="flex items-center gap-3 mb-10">
@@ -96,16 +94,13 @@ const Signup = () => {
 
             {/* Features */}
             <div className="mt-12 space-y-4">
-              
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-violet-100 flex items-center justify-center">
                   <Sparkles className="w-5 h-5 text-violet-600" />
                 </div>
 
                 <div>
-                  <p className="font-medium text-gray-900">
-                    AI summaries
-                  </p>
+                  <p className="font-medium text-gray-900">AI summaries</p>
 
                   <p className="text-sm text-gray-500">
                     Instantly generate concise note summaries.
@@ -133,9 +128,7 @@ const Signup = () => {
 
           {/* Mock Preview */}
           <div className="mt-16">
-            
             <div className="bg-white border border-gray-200 rounded-3xl p-6 shadow-[0_10px_40px_rgba(15,23,42,0.06)] max-w-md">
-              
               <div className="flex items-start justify-between mb-5">
                 <div>
                   <h3 className="font-semibold text-gray-900">
@@ -153,17 +146,11 @@ const Signup = () => {
               </div>
 
               <div className="space-y-3 text-sm text-gray-600">
-                <p>
-                  • Finalize dashboard collaboration workflow
-                </p>
+                <p>• Finalize dashboard collaboration workflow</p>
 
-                <p>
-                  • Improve async note synchronization
-                </p>
+                <p>• Improve async note synchronization</p>
 
-                <p>
-                  • Add AI-generated action items support
-                </p>
+                <p>• Add AI-generated action items support</p>
               </div>
 
               <div className="flex items-center gap-2 mt-6">
@@ -182,9 +169,7 @@ const Signup = () => {
 
       {/* RIGHT SECTION */}
       <div className="flex-1 flex items-center justify-center px-6 py-10 relative z-10">
-        
         <div className="w-full max-w-lg">
-          
           {/* Mobile Logo */}
           <div className="lg:hidden flex items-center gap-3 mb-10 justify-center">
             <div className="w-12 h-12 rounded-2xl bg-violet-600 flex items-center justify-center">
@@ -196,18 +181,14 @@ const Signup = () => {
                 Peblo Notes
               </h2>
 
-              <p className="text-sm text-gray-500">
-                Collaborative workspace
-              </p>
+              <p className="text-sm text-gray-500">Collaborative workspace</p>
             </div>
           </div>
 
           {/* Card */}
           <div className="bg-white border border-gray-200 rounded-[28px] p-8 md:p-10 shadow-[0_10px_40px_rgba(15,23,42,0.08)]">
-            
             {/* Header */}
             <div className="mb-8">
-              
               <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-violet-200 mb-6">
                 <Sparkles className="w-7 h-7 text-white" />
               </div>
@@ -224,7 +205,6 @@ const Signup = () => {
 
             {/* FORM */}
             <form onSubmit={handleSubmit} className="space-y-5">
-              
               {/* NAME */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">

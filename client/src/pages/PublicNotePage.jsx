@@ -1,14 +1,7 @@
-// src/pages/PublicNotePage.jsx
-
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
-import {
-  Globe,
-  Sparkles,
- 
-  FileText,
-} from "lucide-react";
+import { Globe, Sparkles, FileText } from "lucide-react";
 
 import { getPublicNote } from "../services/shareService";
 
@@ -139,14 +132,11 @@ const PublicNotePage = () => {
 
                   <span className="text-xs font-medium">
                     Updated{" "}
-                    {new Date(note.updatedAt).toLocaleDateString(
-                      "en-US",
-                      {
-                        month: "short",
-                        day: "numeric",
-                        year: "numeric",
-                      }
-                    )}
+                    {new Date(note.updatedAt).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    })}
                   </span>
                 </div>
               )}
@@ -191,12 +181,8 @@ const PublicNotePage = () => {
           <div className="flex items-center gap-2">
             <Sparkles size={14} className="text-[#7C3AED]" />
 
-            <span>
-              Shared securely using Peblo AI Notes Workspace
-            </span>
+            <span>Shared securely using Peblo AI Notes Workspace</span>
           </div>
-
-         
         </div>
       </div>
     </div>

@@ -2,16 +2,14 @@ import express from "express";
 
 import { getDashboardStats } from "../controllers/dashboardController.js";
 
-import authMiddleware from "../middleware/authMiddleware.js";
+import protect from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-
-// GET DASHBOARD STATS
 router.get(
   "/stats",
 
-  authMiddleware,
+  protect,
 
   getDashboardStats
 );

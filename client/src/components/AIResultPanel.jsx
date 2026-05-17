@@ -1,4 +1,3 @@
-// src/components/AIResultPanel.jsx
 
 import {
   Brain,
@@ -34,6 +33,7 @@ const AIResultPanel = ({ aiResult, onUseTitle }) => {
       toast.error("Failed to copy");
     }
   };
+  
 
   const renderCopyButton = (section, text) => (
     <button

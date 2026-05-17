@@ -2,9 +2,9 @@ import express from "express";
 
 import { generateSummary } from "../controllers/aiController.js";
 
-import verifyToken from "../middleware/verifyToken.js";
+import protect from "../middleware/authMiddleware.js";
 
-import validate from "../middleware/validate.js";
+import validate from "../utils/validate.js";
 
 import {
   summarizeValidation,
@@ -15,7 +15,7 @@ const router = express.Router();
 router.post(
   "/summarize/:id",
 
-  verifyToken,
+  protect,
 
   summarizeValidation,
 

@@ -10,7 +10,7 @@ import {
   loginValidation,
 } from "../validators/authValidator.js";
 
-import validate from "../middleware/validate.js";
+import validate from "../utils/validate.js";
 
 const router = express.Router();
 

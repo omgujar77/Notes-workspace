@@ -1,53 +1,37 @@
-// src/pages/NotesPage.jsx
-
 import { useEffect, useState } from "react";
-
 import toast from "react-hot-toast";
+import DashboardLayout from "../layouts/DashboardLayout";
+import useDocumentTitle from "../hooks/useDocumentTitle";
 
-import {
-  FileText,
-  Sparkles,
-  PenSquare,
-  Menu,
-  X,
-} from "lucide-react";
+import { FileText, Sparkles, PenSquare, Menu, X } from "lucide-react";
 
 import NotesSidebar from "../components/NotesSidebar";
 import NoteEditor from "../components/NoteEditor";
 
-import API from "../services/noteService";
+import { getNotes } from "../services/noteService";
 
 const NotesPage = () => {
+  useDocumentTitle("My Notes");
   const [notes, setNotes] = useState([]);
 
-  const [selectedNote, setSelectedNote] =
-    useState(null);
+  const [selectedNote, setSelectedNote] = useState(null);
 
-  const [loading, setLoading] =
-    useState(true);
+  const [loading, setLoading] = useState(true);
 
-  const [showArchived, setShowArchived] =
-    useState(false);
+  const [showArchived, setShowArchived] = useState(false);
 
-  const [mobileSidebar, setMobileSidebar] =
-    useState(false);
+  const [mobileSidebar, setMobileSidebar] = useState(false);
 
   useEffect(() => {
     fetchNotes(showArchived);
   }, [showArchived]);
 
   // FETCH NOTES
-  const fetchNotes = async (
-    archived = false
-  ) => {
+  const fetchNotes = async (archived = false) => {
     try {
       setLoading(true);
 
-      const { data } = await API.get(
-        archived
-          ? "/?archived=true"
-          : "/"
-      );
+      const data = await getNotes(archived);
 
       setNotes(data);
 
@@ -59,9 +43,7 @@ const NotesPage = () => {
     } catch (error) {
       console.log(error);
 
-      toast.error(
-        "Failed to fetch notes"
-      );
+      toast.error("Failed to fetch notes");
     } finally {
       setLoading(false);
     }
@@ -70,21 +52,23 @@ const NotesPage = () => {
   // LOADING STATE
   if (loading) {
     return (
-      <div className="h-screen bg-[#F8F9FC] flex items-center justify-center px-4">
-        <div className="bg-white border border-gray-200 rounded-3xl shadow-sm px-8 py-8 flex flex-col items-center max-w-sm w-full">
-          <div className="w-14 h-14 rounded-2xl bg-[#F3F0FF] flex items-center justify-center mb-5">
-            <Sparkles className="w-7 h-7 text-[#7C3AED] animate-pulse" />
+      <DashboardLayout>
+        <div className="h-screen bg-[#F8F9FC] flex items-center justify-center px-4">
+          <div className="bg-white border border-gray-200 rounded-3xl shadow-sm px-8 py-8 flex flex-col items-center max-w-sm w-full">
+            <div className="w-14 h-14 rounded-2xl bg-[#F3F0FF] flex items-center justify-center mb-5">
+              <Sparkles className="w-7 h-7 text-[#7C3AED] animate-pulse" />
+            </div>
+
+            <h2 className="text-xl font-semibold text-gray-900 mb-2">
+              Loading Workspace
+            </h2>
+
+            <p className="text-sm text-gray-500 text-center leading-relaxed">
+              Fetching your notes and preparing your collaborative workspace.
+            </p>
           </div>
-
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">
-            Loading Workspace
-          </h2>
-
-          <p className="text-sm text-gray-500 text-center leading-relaxed">
-            Fetching your notes and preparing your collaborative workspace.
-          </p>
         </div>
-      </div>
+      </DashboardLayout>
     );
   }
 
@@ -94,9 +78,7 @@ const NotesPage = () => {
       {mobileSidebar && (
         <div
           className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40 md:hidden"
-          onClick={() =>
-            setMobileSidebar(false)
-          }
+          onClick={() => setMobileSidebar(false)}
         />
       )}
 
@@ -128,22 +110,15 @@ const NotesPage = () => {
                 Peblo Notes
               </h2>
 
-              <p className="text-xs text-gray-500">
-                AI Workspace
-              </p>
+              <p className="text-xs text-gray-500">AI Workspace</p>
             </div>
           </div>
 
           <button
-            onClick={() =>
-              setMobileSidebar(false)
-            }
+            onClick={() => setMobileSidebar(false)}
             className="p-2 rounded-xl hover:bg-gray-100"
           >
-            <X
-              size={18}
-              className="text-gray-600"
-            />
+            <X size={18} className="text-gray-600" />
           </button>
         </div>
 
@@ -151,16 +126,10 @@ const NotesPage = () => {
           notes={notes}
           setNotes={setNotes}
           selectedNote={selectedNote}
-          setSelectedNote={
-            setSelectedNote
-          }
+          setSelectedNote={setSelectedNote}
           fetchNotes={fetchNotes}
-          showArchived={
-            showArchived
-          }
-          setShowArchived={
-            setShowArchived
-          }
+          showArchived={showArchived}
+          setShowArchived={setShowArchived}
         />
       </div>
 
@@ -172,15 +141,10 @@ const NotesPage = () => {
           <div className="flex items-center gap-4">
             {/* MOBILE MENU */}
             <button
-              onClick={() =>
-                setMobileSidebar(true)
-              }
+              onClick={() => setMobileSidebar(true)}
               className="md:hidden w-10 h-10 rounded-xl border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors"
             >
-              <Menu
-                size={18}
-                className="text-gray-700"
-              />
+              <Menu size={18} className="text-gray-700" />
             </button>
 
             <div>
@@ -189,8 +153,7 @@ const NotesPage = () => {
               </h1>
 
               <p className="text-sm text-gray-500 mt-0.5">
-                AI-powered workspace for
-                smarter note management
+                AI-powered workspace for smarter note management
               </p>
             </div>
           </div>
@@ -198,10 +161,7 @@ const NotesPage = () => {
           {/* RIGHT */}
           <div className="hidden md:flex items-center gap-3">
             <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#F5F3FF] border border-[#DDD6FE]">
-              <Sparkles
-                size={14}
-                className="text-[#7C3AED]"
-              />
+              <Sparkles size={14} className="text-[#7C3AED]" />
 
               <span className="text-xs font-medium text-[#6D28D9]">
                 AI Enabled
@@ -211,9 +171,7 @@ const NotesPage = () => {
             <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-green-50 border border-green-100">
               <div className="w-2 h-2 rounded-full bg-green-500"></div>
 
-              <span className="text-xs font-medium text-green-700">
-                Synced
-              </span>
+              <span className="text-xs font-medium text-green-700">Synced</span>
             </div>
           </div>
         </div>
@@ -223,12 +181,8 @@ const NotesPage = () => {
           {selectedNote ? (
             <div className="h-full overflow-y-auto">
               <NoteEditor
-                selectedNote={
-                  selectedNote
-                }
-                setSelectedNote={
-                  setSelectedNote
-                }
+                selectedNote={selectedNote}
+                setSelectedNote={setSelectedNote}
                 notes={notes}
                 setNotes={setNotes}
               />
@@ -245,16 +199,12 @@ const NotesPage = () => {
                 </h2>
 
                 <p className="text-gray-500 leading-relaxed mb-8">
-                  Select an existing note or
-                  create a new one to begin
-                  writing and collaborating
-                  with AI assistance.
+                  Select an existing note or create a new one to begin writing
+                  and collaborating with AI assistance.
                 </p>
 
                 <button
-                  onClick={() =>
-                    setMobileSidebar(true)
-                  }
+                  onClick={() => setMobileSidebar(true)}
                   className="md:hidden inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-[#7C3AED] hover:bg-[#6D28D9] text-white text-sm font-medium transition-all duration-200"
                 >
                   <Menu size={16} />

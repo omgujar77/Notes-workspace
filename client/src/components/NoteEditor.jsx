@@ -1,10 +1,11 @@
-// src/components/NoteEditor.jsx
-
 import { useEffect, useState, useRef } from "react";
-import API from "../services/noteService";
+import {
+  updateNote as updateNoteService,
+  deleteNote as deleteNoteService,
+} from "../services/noteService";
 import TagInput from "./TagInput";
 import AIResultPanel from "./AIResultPanel";
-import { generateAISummary } from "../api/ai";
+import { generateAISummary } from "../services/aiService";
 
 import {
   Save,
@@ -27,12 +28,7 @@ import { togglePublic } from "../services/shareService";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 
-const NoteEditor = ({
-  selectedNote,
-  setSelectedNote,
-  notes,
-  setNotes,
-}) => {
+const NoteEditor = ({ selectedNote, setSelectedNote, notes, setNotes }) => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [tags, setTags] = useState([]);
@@ -101,13 +97,10 @@ const NoteEditor = ({
           tags,
         };
 
-        const { data } = await API.put(
-          `/${selectedNote._id}`,
-          payload
-        );
+        const data = await updateNoteService(selectedNote._id, payload);
 
         const updatedNotes = notes.map((note) =>
-          note._id === data._id ? data : note
+          note._id === data._id ? data : note,
         );
 
         setNotes(updatedNotes);
@@ -126,7 +119,7 @@ const NoteEditor = ({
       } finally {
         setIsAutoSaving(false);
       }
-    }, 4500);
+    }, 3500);
 
     return () => clearTimeout(timer);
   }, [title, content, tags]);
@@ -142,13 +135,10 @@ const NoteEditor = ({
         tags: Array.isArray(tags) ? [...tags] : [],
       };
 
-      const { data } = await API.put(
-        `/${selectedNote._id}`,
-        payload
-      );
+      const data = await updateNoteService(selectedNote._id, payload);
 
       const updatedNotes = notes.map((note) =>
-        note._id === data._id ? data : note
+        note._id === data._id ? data : note,
       );
 
       setNotes(updatedNotes);
@@ -170,9 +160,7 @@ const NoteEditor = ({
 
       setAiError("");
 
-      const result = await generateAISummary(
-        selectedNote._id
-      );
+      const result = await generateAISummary(selectedNote._id);
 
       setAiResult(result);
 
@@ -202,9 +190,7 @@ const NoteEditor = ({
       });
 
       toast.success(
-        data.isPublic
-          ? "Note is now public"
-          : "Note is now private"
+        data.isPublic ? "Note is now public" : "Note is now private",
       );
     } catch (error) {
       toast.error("Failed to update visibility");
@@ -233,16 +219,16 @@ const NoteEditor = ({
   // DELETE NOTE
   const deleteNote = async () => {
     const confirmDelete = window.confirm(
-      "Are you sure you want to delete this note?"
+      "Are you sure you want to delete this note?",
     );
 
     if (!confirmDelete) return;
 
     try {
-      await API.delete(`/${selectedNote._id}`);
+      await deleteNoteService(selectedNote._id);
 
       const updatedNotes = notes.filter(
-        (note) => note._id !== selectedNote._id
+        (note) => note._id !== selectedNote._id,
       );
 
       setNotes(updatedNotes);
@@ -259,9 +245,7 @@ const NoteEditor = ({
   if (!selectedNote) {
     return (
       <div className="h-full bg-[#F8FAFC] flex items-center justify-center px-6">
-        
         <div className="max-w-md text-center">
-          
           <div className="w-20 h-20 rounded-3xl bg-violet-100 flex items-center justify-center mx-auto mb-6">
             <FileText className="w-10 h-10 text-violet-600" />
           </div>
@@ -271,8 +255,8 @@ const NoteEditor = ({
           </h2>
 
           <p className="text-gray-500 leading-relaxed">
-            Choose a note from your workspace or create a new one
-            to start writing.
+            Choose a note from your workspace or create a new one to start
+            writing.
           </p>
         </div>
       </div>
@@ -281,23 +265,15 @@ const NoteEditor = ({
 
   return (
     <div className="h-full bg-[#F8FAFC] overflow-hidden flex flex-col">
-      
       {/* TOP HEADER */}
       <div className="border-b border-gray-200 bg-white px-4 md:px-8 py-4 sticky top-0 z-30">
-        
         <div className="flex flex-col gap-4">
-          
           {/* TOP ROW */}
           <div className="flex items-center justify-between gap-4">
-            
             <div className="flex items-center gap-3">
-              
               <Link to="/">
                 <button className="w-11 h-11 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 transition flex items-center justify-center">
-                  <ArrowLeft
-                    className="text-gray-700"
-                    size={18}
-                  />
+                  <ArrowLeft className="text-gray-700" size={18} />
                 </button>
               </Link>
 
@@ -314,24 +290,16 @@ const NoteEditor = ({
 
             {/* SAVE STATUS */}
             <div className="hidden md:flex items-center gap-2">
-              
               {showSaveCheck ? (
                 <div className="flex items-center gap-2 text-emerald-600 bg-emerald-50 border border-emerald-100 px-4 py-2 rounded-full">
                   <Check size={16} />
-                  <span className="text-sm font-medium">
-                    Saved
-                  </span>
+                  <span className="text-sm font-medium">Saved</span>
                 </div>
               ) : isAutoSaving ? (
                 <div className="flex items-center gap-2 text-violet-600 bg-violet-50 border border-violet-100 px-4 py-2 rounded-full">
-                  <Loader2
-                    size={16}
-                    className="animate-spin"
-                  />
+                  <Loader2 size={16} className="animate-spin" />
 
-                  <span className="text-sm font-medium">
-                    Auto-saving
-                  </span>
+                  <span className="text-sm font-medium">Auto-saving</span>
                 </div>
               ) : (
                 <div className="flex items-center gap-2 text-gray-500 bg-gray-50 border border-gray-200 px-4 py-2 rounded-full">
@@ -347,7 +315,6 @@ const NoteEditor = ({
 
           {/* ACTIONS */}
           <div className="flex flex-wrap items-center gap-3">
-            
             {/* SAVE */}
             <button
               onClick={saveNote}
@@ -359,10 +326,7 @@ const NoteEditor = ({
               }`}
             >
               {saving ? (
-                <Loader2
-                  size={17}
-                  className="animate-spin"
-                />
+                <Loader2 size={17} className="animate-spin" />
               ) : (
                 <Save size={17} />
               )}
@@ -381,17 +345,12 @@ const NoteEditor = ({
               }`}
             >
               {loadingAI ? (
-                <Loader2
-                  size={17}
-                  className="animate-spin"
-                />
+                <Loader2 size={17} className="animate-spin" />
               ) : (
                 <Brain size={17} />
               )}
 
-              {loadingAI
-                ? "Generating..."
-                : "AI Summary"}
+              {loadingAI ? "Generating..." : "AI Summary"}
             </button>
 
             {/* PUBLIC */}
@@ -441,35 +400,24 @@ const NoteEditor = ({
 
       {/* MAIN CONTENT */}
       <div className="flex-1 overflow-y-auto px-4 md:px-8 py-6">
-        
         {/* AI STATUS */}
         {aiError && (
           <div className="mb-5 bg-red-50 border border-red-200 rounded-2xl p-4">
-            
             <div className="flex items-start gap-3">
-              
               <div className="w-2 h-2 rounded-full bg-red-500 mt-2" />
 
-              <p className="text-sm font-medium text-red-700">
-                {aiError}
-              </p>
+              <p className="text-sm font-medium text-red-700">{aiError}</p>
             </div>
           </div>
         )}
 
         {loadingAI && (
           <div className="mb-5 bg-violet-50 border border-violet-200 rounded-2xl p-4">
-            
             <div className="flex items-center gap-3">
-              
-              <Brain
-                className="text-violet-600 animate-pulse"
-                size={20}
-              />
+              <Brain className="text-violet-600 animate-pulse" size={20} />
 
               <p className="text-sm font-medium text-violet-700">
-                AI is analyzing your note and generating
-                insights...
+                AI is analyzing your note and generating insights...
               </p>
             </div>
           </div>
@@ -477,10 +425,8 @@ const NoteEditor = ({
 
         {/* EDITOR CARD */}
         <div className="bg-white border border-gray-200 rounded-[28px] shadow-sm overflow-hidden">
-          
           {/* TOP SECTION */}
           <div className="px-6 md:px-10 pt-8 md:pt-10">
-            
             {/* TITLE */}
             <input
               type="text"
@@ -492,13 +438,10 @@ const NoteEditor = ({
 
             {/* META */}
             <div className="flex flex-wrap items-center gap-3 mt-5">
-              
               <div className="flex items-center gap-2 text-sm text-gray-500">
                 <ShieldCheck size={16} />
 
-                <span>
-                  Secure collaborative workspace
-                </span>
+                <span>Secure collaborative workspace</span>
               </div>
 
               {isPublic && (
@@ -523,21 +466,16 @@ const NoteEditor = ({
 
           {/* TEXTAREA */}
           <div className="px-6 md:px-10 py-8">
-            
             <div className="relative">
-              
               <textarea
                 ref={textareaRef}
                 value={content}
-                onChange={(e) =>
-                  setContent(e.target.value)
-                }
+                onChange={(e) => setContent(e.target.value)}
                 placeholder="Start writing your thoughts, meeting notes, ideas, or learning summaries..."
                 className="w-full min-h-[420px] bg-transparent resize-none outline-none text-[17px] leading-8 text-gray-700 placeholder:text-gray-400"
               />
 
               <div className="sticky bottom-4 flex justify-end pointer-events-none">
-                
                 <div className="bg-gray-900 text-white text-xs font-medium px-3 py-1.5 rounded-full shadow-lg">
                   {content.length} characters
                 </div>
@@ -549,7 +487,6 @@ const NoteEditor = ({
         {/* AI RESULT */}
         {aiResult && (
           <div className="mt-6">
-            
             <AIResultPanel
               aiResult={aiResult}
               onUseTitle={(newTitle) => {
@@ -560,9 +497,7 @@ const NoteEditor = ({
                   title: newTitle,
                 });
 
-                toast.success(
-                  "Suggested title applied"
-                );
+                toast.success("Suggested title applied");
               }}
             />
           </div>

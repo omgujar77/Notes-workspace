@@ -1,19 +1,21 @@
-import api from "../api/axios";
+import API from "../api/axios";
 
-
-// toggle public/private
-export const togglePublic = async (noteId) => {
-  const response = await api.patch(
+// TOGGLE PUBLIC/PRIVATE
+export const togglePublic = async (
+  noteId
+) => {
+  const response = await API.patch(
     `/shared/toggle/${noteId}`
   );
 
   return response.data;
 };
 
-
-// get public note
-export const getPublicNote = async (shareId) => {
-  const response = await api.get(
+// GET PUBLIC NOTE
+export const getPublicNote = async (
+  shareId
+) => {
+  const response = await API.get(
     `/shared/${shareId}`
   );
 

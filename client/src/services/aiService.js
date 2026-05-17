@@ -1,7 +1,7 @@
-import axiosInstance from "./axios";
+import API from "../api/axios";
 
 export const generateAISummary = async (noteId) => {
-  const response = await axiosInstance.post(
+  const response = await API.post(
     `/ai/summarize/${noteId}`
   );
 

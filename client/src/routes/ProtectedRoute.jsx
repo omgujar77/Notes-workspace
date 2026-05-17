@@ -1,16 +1,30 @@
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 
-const ProtectedRoute = () => {
+import { useAuth } from "../context/AuthContext";
 
-  const token = localStorage.getItem("token");
+const ProtectedRoute = ({
+  children,
+}) => {
 
-  // If no token -> redirect login
-  if (!token) {
-    return <Navigate to="/login" />;
+  const {
+    user,
+    loading,
+  } = useAuth();
+
+  // PREVENT FLICKER
+  if (loading) {
+    return null;
   }
 
-  // If token exists -> allow route
-  return <Outlet />;
+  // NO USER
+  if (!user) {
+    return (
+      <Navigate to="/login" replace />
+    );
+  }
+
+  // ALLOW ACCESS
+  return children;
 };
 
 export default ProtectedRoute;

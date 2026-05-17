@@ -1,11 +1,8 @@
 import User from "../models/User.js";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-
-
+import { generateToken } from "../utils/jwt.js";
 
 // SIGNUP CONTROLLER
-
 
 export const signup = async (req, res) => {
   try {
@@ -41,16 +38,7 @@ export const signup = async (req, res) => {
     });
 
     // GENERATE JWT TOKEN
-    const token = jwt.sign(
-      {
-        id: newUser._id,
-        email: newUser.email,
-      },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: "7d",
-      }
-    );
+   const token = generateToken(newUser);
 
     // Send response
     res.status(201).json({
@@ -74,11 +62,7 @@ export const signup = async (req, res) => {
   }
 };
 
-
-
-// ==========================
 // LOGIN CONTROLLER
-// ==========================
 
 export const login = async (req, res) => {
 
@@ -105,7 +89,6 @@ export const login = async (req, res) => {
     }
 
     // COMPARE PASSWORD
-    // Compare entered password with database password
     const isMatch = await bcrypt.compare(password, user.password);
 
     // Wrong password
@@ -116,16 +99,7 @@ export const login = async (req, res) => {
     }
 
     // CREATE JWT TOKEN
-    const token = jwt.sign(
-      {
-        id: user._id,
-        email: user.email,
-      },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: "7d",
-      }
-    );
+  const token = generateToken(user);
 
     // Send response
     res.status(200).json({

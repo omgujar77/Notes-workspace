@@ -7,7 +7,7 @@ import {
 
 import protect from "../middleware/authMiddleware.js";
 
-import validate from "../middleware/validate.js";
+import validate from "../utils/validate.js";
 
 import {
   toggleShareValidation,
@@ -16,8 +16,6 @@ import {
 
 const router = express.Router();
 
-
-// PRIVATE ROUTE
 router.patch(
   "/toggle/:id",
 
@@ -30,8 +28,6 @@ router.patch(
   togglePublicNote
 );
 
-
-// PUBLIC ROUTE
 router.get(
   "/:shareId",
 

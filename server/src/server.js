@@ -3,49 +3,54 @@ dotenv.config();
 
 import express from "express";
 import cors from "cors";
+
 import connectDB from "./config/db.js";
+import env from "./config/env.js";
 
-import authRoutes from "./routes/authRoutes.js";
-import noteRoutes from "./routes/noteRoutes.js";
-import aiRoutes from "./routes/aiRoutes.js";
-import shareRoutes from "./routes/shareRoutes.js";
-import dashboardRoutes from "./routes/dashboardRoutes.js";
+import setupRoutes from "./routes/index.js";
 
-import verifyToken from "./middleware/verifyToken.js";
-import errorHandler from "./middleware/errorMiddleware.js";
+import protect from "./middleware/authMiddleware.js";
+import errorHandler from "./middleware/errorHandler.js";
 
 const app = express();
 
+// MIDDLEWARES
 app.use(cors());
+
 app.use(express.json());
 
+// DATABASE CONNECTION
 connectDB();
 
-app.use("/api/auth", authRoutes);
-app.use("/api/notes", noteRoutes);
-app.use("/api/ai", aiRoutes);
-app.use("/api/shared", shareRoutes);
-app.use("/api/dashboard", dashboardRoutes);
+// ROUTES
+setupRoutes(app);
 
+// TEST ROUTE
 app.get("/", (req, res) => {
-  res.json({ message: "API Running" });
-});
-
-app.get("/api/protected", verifyToken, (req, res) => {
   res.json({
-    success: true,
-    message: "Protected route accessed",
-    user: req.user,
+    message: "API Running",
   });
 });
 
-/*
-  GLOBAL ERROR HANDLER
-  MUST BE AFTER ROUTES
-*/
+// PROTECTED TEST ROUTE
+app.get(
+  "/api/protected",
+
+  protect,
+
+  (req, res) => {
+    res.json({
+      success: true,
+      message: "Protected route accessed",
+      user: req.user,
+    });
+  }
+);
+
+// GLOBAL ERROR HANDLER
 app.use(errorHandler);
 
-const PORT = process.env.PORT || 5000;
+const PORT = env.PORT;
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

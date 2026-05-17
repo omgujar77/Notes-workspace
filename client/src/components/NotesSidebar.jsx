@@ -1,7 +1,6 @@
-// src/components/NotesSidebar.jsx
-
 import { useMemo, useState } from "react";
 import toast from "react-hot-toast";
+import useDebounce from "../hooks/useDebounce";
 import {
   Search,
   Archive,
@@ -16,7 +15,11 @@ import {
   FileText,
 } from "lucide-react";
 
-import API from "../services/noteService";
+import {
+  createNote as createNoteService,
+  archiveNote as archiveNoteService,
+  restoreNote as restoreNoteService,
+} from "../services/noteService";
 
 const NotesSidebar = ({
   notes,
@@ -31,6 +34,8 @@ const NotesSidebar = ({
   const [creating, setCreating] = useState(false);
   const [filterType, setFilterType] = useState("recent");
   const [showFilters, setShowFilters] = useState(false);
+  const debouncedSearch =
+  useDebounce(search, 400);
 
   // CREATE NOTE
   const createNote = async () => {
@@ -43,9 +48,10 @@ const NotesSidebar = ({
         tags: [],
       };
 
-      const { data } = await API.post("/", newNote);
+      const data = await createNoteService(newNote);
 
       setNotes((prev) => [data, ...prev]);
+
       setSelectedNote(data);
 
       toast.success("New note created");
@@ -62,7 +68,7 @@ const NotesSidebar = ({
     e.stopPropagation();
 
     try {
-      await API.patch(`/archive/${noteId}`);
+      await archiveNoteService(noteId);
 
       toast.success("Note archived");
 
@@ -77,7 +83,7 @@ const NotesSidebar = ({
     e.stopPropagation();
 
     try {
-      await API.patch(`/restore/${noteId}`);
+      await restoreNoteService(noteId);
 
       toast.success("Note restored");
 
@@ -93,10 +99,20 @@ const NotesSidebar = ({
 
     // SEARCH
     filtered = filtered.filter(
-      (note) =>
-        note.title.toLowerCase().includes(search.toLowerCase()) ||
-        note.content.toLowerCase().includes(search.toLowerCase())
-    );
+  (note) =>
+    note.title
+      .toLowerCase()
+      .includes(
+        debouncedSearch.toLowerCase()
+      ) ||
+
+    note.content
+      .toLowerCase()
+      .includes(
+        debouncedSearch.toLowerCase()
+      )
+);
+    
 
     // AI FILTER
     if (filterType === "ai") {
@@ -105,20 +121,16 @@ const NotesSidebar = ({
 
     // OLD NOTES
     if (filterType === "old") {
-      filtered.sort(
-        (a, b) => new Date(a.updatedAt) - new Date(b.updatedAt)
-      );
+      filtered.sort((a, b) => new Date(a.updatedAt) - new Date(b.updatedAt));
     }
 
     // RECENT NOTES
     if (filterType === "recent") {
-      filtered.sort(
-        (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)
-      );
+      filtered.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
     }
 
     return filtered;
-  }, [notes, search, filterType]);
+  }, [notes, debouncedSearch, filterType]);
 
   const filterButtonClass = (active) =>
     `flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium transition-all duration-200 border ${
@@ -323,7 +335,7 @@ const NotesSidebar = ({
                             {
                               month: "short",
                               day: "numeric",
-                            }
+                            },
                           )}
                         </div>
 
@@ -399,7 +411,7 @@ const NotesSidebar = ({
       </div>
 
       {/* CUSTOM SCROLLBAR */}
-      <style jsx>{`
+      <style>{`
         .custom-scrollbar::-webkit-scrollbar {
           width: 6px;
         }

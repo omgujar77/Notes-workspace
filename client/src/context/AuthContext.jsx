@@ -7,29 +7,42 @@ import {
 
 import { useNavigate } from "react-router-dom";
 
+import {
+  getToken,
+  setToken,
+  removeToken,
+} from "../utils/storage";
+
 const AuthContext = createContext();
 
-export const AuthProvider = ({ children }) => {
+export const AuthProvider = ({
+  children,
+}) => {
 
   // NAVIGATE
   const navigate = useNavigate();
 
   // USER STATE
-  const [user, setUser] = useState(null);
+  const [user, setUser] =
+    useState(null);
 
   // LOADING STATE
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] =
+    useState(true);
 
   // CHECK AUTH ON REFRESH
   useEffect(() => {
 
-    const token = localStorage.getItem("token");
+    const token = getToken();
 
-    const storedUser = localStorage.getItem("user");
+    const storedUser =
+      localStorage.getItem("user");
 
     if (token && storedUser) {
 
-      setUser(JSON.parse(storedUser));
+      setUser(
+        JSON.parse(storedUser)
+      );
     }
 
     setLoading(false);
@@ -37,9 +50,12 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   // LOGIN
-  const login = (userData, token) => {
+  const login = (
+    userData,
+    token
+  ) => {
 
-    localStorage.setItem("token", token);
+    setToken(token);
 
     localStorage.setItem(
       "user",
@@ -52,9 +68,11 @@ export const AuthProvider = ({ children }) => {
   // LOGOUT
   const logout = () => {
 
-    localStorage.removeItem("token");
+    removeToken();
 
-    localStorage.removeItem("user");
+    localStorage.removeItem(
+      "user"
+    );
 
     setUser(null);
 
