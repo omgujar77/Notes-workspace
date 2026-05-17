@@ -144,7 +144,7 @@ AI-NOTES-WORKSPACE/
 ## 1️⃣ Clone Repository
 
 ```bash
-git clone https://github.com/your-username/ai-notes-workspace.git
+git clone https://github.com/omgujar77/Notes-workspace.git
 
 cd ai-notes-workspace
 ```
