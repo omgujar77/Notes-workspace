@@ -107,7 +107,7 @@ const NotesPage = () => {
 
             <div>
               <h2 className="text-sm font-semibold text-gray-900">
-                Peblo Notes
+                Notes
               </h2>
 
               <p className="text-xs text-gray-500">AI Workspace</p>
