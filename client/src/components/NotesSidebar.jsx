@@ -401,7 +401,7 @@ const NotesSidebar = ({
       {/* FOOTER */}
       <div className="border-t border-gray-200 bg-white px-5 py-4">
         <div className="flex items-center justify-between text-xs text-gray-500">
-          <span>Peblo Workspace</span>
+          <span>Workspace</span>
 
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-green-500"></div>
